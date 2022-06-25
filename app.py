@@ -1,5 +1,5 @@
 # -*- encoding: utf8 -*-
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, redirect, abort
 
 app = Flask(__name__)
 
@@ -28,6 +28,18 @@ def cookies_demo():
     response.content_type = "application/json"
     response.set_data('teste')
     return response
+
+
+@app.route('/redirect-user')
+def redirect_demo():
+    return redirect('https://www.google.com.br')
+
+
+@app.route('/users/<id>')
+def abort_demo(id):
+    if int(id) != 1:
+        abort(404)
+    return '<h1>Hello, cristiano</h1>'
 
 
 if __name__ == '__main__':
