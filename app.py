@@ -1,18 +1,18 @@
 # -*- encoding: utf8 -*-
-from flask import Flask, request, make_response, redirect, abort
+from flask import Flask, request, make_response, redirect, abort, render_template
 
 app = Flask(__name__)
 
 
 @app.route('/')
 def index():
-    user_agent = request.headers.get('User-Agent')
-    return '<h1>Your browser is {}!</h1>'.format(user_agent)
+    # user_agent = request.headers.get('User-Agent')
+    return render_template('index.html')
 
 
 @app.route('/user/<name>')
 def show_user_name(name):
-    return '<h1>Hello, {}!</h1>'.format(name)
+    return render_template('user.html', name=name)
 
 
 @app.route('/bad-request')
