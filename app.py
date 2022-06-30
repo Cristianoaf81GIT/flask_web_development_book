@@ -15,6 +15,12 @@ def show_user_name(name):
     return render_template('user.html', name=name)
 
 
+@app.route('/comments')
+def show_comments():
+    comments = ['ok', 'lets', 'go', 'python']
+    return render_template('comments.html', comments=comments)
+
+
 @app.route('/bad-request')
 def bad_request_example():
     return '<h1>Bad request</h1', 400
