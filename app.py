@@ -1,7 +1,9 @@
 # -*- encoding: utf8 -*-
 from flask import Flask, request, make_response, redirect, abort, render_template
+from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
+Bootstrap(app)
 
 
 @app.route('/')
