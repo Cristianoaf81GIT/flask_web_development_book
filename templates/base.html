@@ -1,5 +1,6 @@
 {% extends "bootstrap/base.html" %} {% block title %}Flasky{% endblock %}
 {%block navbar %} {% block head %} {{ super() }}
+
 <link
   rel="shortcut icon"
   href="{{ url_for('static', filename='favicon.ico') }}"
@@ -10,7 +11,7 @@
   href="{{ url_for('static', filename='favicon.ico') }}"
   type="image/x-icon"
 />
-{% endblock %}
+{{moment.include_moment()}} {{moment.locale('pt-br')}}{% endblock %}
 <div class="navbar navbar-inverse" role="navigation">
   <div class="container">
     <div class="navbar-header">

@@ -1,15 +1,17 @@
 # -*- encoding: utf8 -*-
 from flask import Flask, request, make_response, redirect, abort, render_template
 from flask_bootstrap import Bootstrap
+from flask_moment import Moment
+from datetime import datetime
 
 app = Flask(__name__)
 Bootstrap(app)
+moment = Moment(app)
 
 
 @app.route('/')
 def index():
-    # user_agent = request.headers.get('User-Agent')
-    return render_template('index.html')
+    return render_template('index.html', current_time=datetime.utcnow())
 
 
 @app.route('/user/<name>')
