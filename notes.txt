@@ -1,1 +1,5 @@
 url_for('user', name='john', page=2, version=1) will return  /user/john?page=2&version=1
+handle dates:
+in server side must use utc so client send utc date to server
+and server send utc date to client and the client converts received
+utc to local datetime
