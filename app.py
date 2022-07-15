@@ -3,8 +3,10 @@ from flask import Flask, request, make_response, redirect, abort, render_templat
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from datetime import datetime
+import os
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 Bootstrap(app)
 moment = Moment(app)
 
