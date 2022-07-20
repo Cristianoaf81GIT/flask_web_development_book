@@ -1,0 +1,8 @@
+{% extends "base.html" %} {% block title %}Flasky{% endblock %} {% block
+page_content %}
+  <form method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.name.label }} {{ form.name(id = 'my-text-field') }}
+    {{ form.submit() }}
+  </form>
+{% endblock %}
