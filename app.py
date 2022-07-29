@@ -7,15 +7,22 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from datetime import datetime
 import os
+from flask_sqlalchemy import SQLAlchemy
+
 
 class NameForm(FlaskForm):
     name = StringField('what is your name?',validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+baseDir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI']=\
+        'sqlite:///' + os.path.join(baseDir, 'data.sqlite')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 Bootstrap(app)
 moment = Moment(app)
+db = SQLAlchemy(app)
 
 
 @app.route('/', methods=['GET','POST'])
