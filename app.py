@@ -8,6 +8,7 @@ from wtforms.validators import DataRequired
 from datetime import datetime
 import os
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate 
 
 
 class NameForm(FlaskForm):
@@ -23,6 +24,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 Bootstrap(app)
 moment = Moment(app)
 db = SQLAlchemy(app)
+migrate = Migrate(app,db)
+
 
 # entity user role
 class Role(db.Model):
@@ -44,6 +47,11 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
+
+# shell context
+@app.shell_context_processor
+def make_shell_context():
+    return dict(db=db,User=User,Role=Role)
 
 @app.route('/', methods=['GET','POST'])
 def index():
