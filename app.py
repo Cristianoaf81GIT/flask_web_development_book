@@ -8,8 +8,10 @@ from wtforms.validators import DataRequired
 from datetime import datetime
 import os
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate 
-
+from flask_migrate import Migrate
+from flask_mail import Mail, Message
+# asynchronous support (thread) 
+from threading import Thread
 
 class NameForm(FlaskForm):
     name = StringField('what is your name?',validators=[DataRequired()])
@@ -21,11 +23,41 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI']=\
         'sqlite:///' + os.path.join(baseDir, 'data.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
+# mail send config
+app.config['MAIL_SERVER']= os.environ.get('MAIL_SERVER')
+app.config['MAIL_PORT'] = os.environ.get('MAIL_PORT')
+app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_TLS') == 'True' 
+app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_SSL') == 'True'
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['FLASKY_MAIL_SUBJECT_PREFIX'] = '[Flasky]'
+app.config['FLASKY_MAIL_SENDER'] = 'Flasky Admin <flasky@example.com>'
+app.config['FLASKY_ADMIN'] = os.environ.get('MAIL_USERNAME')
+
+
 Bootstrap(app)
 moment = Moment(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app,db)
+mail = Mail(app)
 
+# its recomended use background tasks with Celery 
+def send_async_email(app,msg):
+    with app.app_context():
+        mail.send(msg)
+
+def send_mail(to, subject,template,**kwargs):
+    msg = Message(
+            app.config['FLASKY_MAIL_SUBJECT_PREFIX'] + subject,
+            sender=app.config['FLASKY_MAIL_SENDER'], 
+            recipients=[to])
+
+    msg.body = render_template(template + '.txt', **kwargs)
+    msg.html = render_template(template + '.html', **kwargs)
+    # mail.send(msg)
+    thr = Thread(target=send_async_email, args=[app,msg])
+    thr.start()
+    return thr
 
 # entity user role
 class Role(db.Model):
@@ -64,6 +96,9 @@ def index():
             db.session.add(user)
             db.session.commit()
             session['known'] = False
+            #if app.config['FLASKY_ADMIN']:
+            #    print(app.config)
+            #    send_mail(app.config['FLASKY_ADMIN'], 'New User', 'mail/new_user', user=user)
         else:
             session['known'] = True
         session['name'] = form.name.data
